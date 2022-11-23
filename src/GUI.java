@@ -47,6 +47,7 @@ public class GUI {
         for (SerialPort port : ports) {
             portList.addItem(port.getSystemPortName());
         }
+        connectButton.setEnabled(portList.getItemCount() != 0);
 
         refresh.addActionListener(e -> {
             portList.removeAllItems();
@@ -54,16 +55,16 @@ public class GUI {
             for (SerialPort port : ports1) {
                 portList.addItem(port.getSystemPortName());
             }
+            connectButton.setEnabled(portList.getItemCount() != 0);
         });
 
         frame.setJMenuBar(menuBar);
 
-        preferences.addActionListener(e -> {
-            settingsDialog(frame);
-        });
+        preferences.addActionListener(e -> settingsDialog(frame));
 
         Gauge = buildDialPlot(dialLabel,minimumValue,maximumValue,majorTick);
         frame.add(Gauge);
+
 
         connectButton.addActionListener(e -> {
             if (connectButton.getText().equals("Connect")) {
