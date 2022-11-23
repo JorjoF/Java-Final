@@ -31,6 +31,7 @@ public class GUI {
         frame.setContentPane(panel1);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(600, 600);
+        frame.setIconImage(new ImageIcon("res/img/logo_transparent.png").getImage());
 
         JMenuBar menuBar = new JMenuBar();
         JMenu menu = new JMenu("<html><u>S</u>ettings</html>");
@@ -98,6 +99,7 @@ public class GUI {
 
         frame.setResizable(false);
         frame.pack();
+        frame.setLocationRelativeTo(null);
         frame.setVisible(true);
     }
 
@@ -186,6 +188,7 @@ public class GUI {
         });
 
         d2.setContentPane(settingsPanel);
+        d2.setLocationRelativeTo(frame);
         d2.setResizable(false);
         d2.setVisible(true);
     }
