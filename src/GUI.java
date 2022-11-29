@@ -27,28 +27,33 @@ public class GUI {
 
 
     public GUI() {
+        //Window setup
         JFrame frame = new JFrame();
         frame.setContentPane(panel1);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(600, 600);
 
+        //Adding a menu bar
         JMenuBar menuBar = new JMenuBar();
         JMenu menu = new JMenu("<html><u>S</u>ettings</html>");
         menu.setMnemonic(KeyEvent.VK_S);
         menu.getAccessibleContext().setAccessibleDescription("Settings Menu");
         menuBar.add(menu);
 
+        //Adding a menu item
         JMenuItem preferences = new JMenuItem("<html><u>P</u>references</html>");
         preferences.setMnemonic(KeyEvent.VK_C);
         preferences.getAccessibleContext().setAccessibleDescription("Preferences");
         menu.add(preferences);
 
+        //Populating comm port list
         SerialPort[] ports = SerialPort.getCommPorts();
         for (SerialPort port : ports) {
             portList.addItem(port.getSystemPortName());
         }
         connectButton.setEnabled(portList.getItemCount() != 0);
 
+        //Refreshing comm port list
         refresh.addActionListener(e -> {
             portList.removeAllItems();
             SerialPort[] ports1 = SerialPort.getCommPorts();
@@ -60,12 +65,15 @@ public class GUI {
 
         frame.setJMenuBar(menuBar);
 
+        //Open settings window
         preferences.addActionListener(e -> settingsDialog(frame));
 
+
+        //Adding gauge
         Gauge = buildDialPlot(dialLabel,minimumValue,maximumValue,majorTick);
         frame.add(Gauge);
 
-
+        //Connecting to comm port
         connectButton.addActionListener(e -> {
             if (connectButton.getText().equals("Connect")) {
                 cp = SerialPort.getCommPort((Objects.requireNonNull(portList.getSelectedItem()).toString()));
@@ -77,6 +85,7 @@ public class GUI {
                     refresh.setEnabled(false);
                 }
                 Thread thread = new Thread(() -> {
+                    //Reading from comm port
                     Scanner scanner = new Scanner(cp.getInputStream());
                     while (scanner.hasNextLine()) {
                         int num = Integer.parseInt(scanner.nextLine());
@@ -87,6 +96,7 @@ public class GUI {
                 });
                 thread.start();
             } else {
+                //Closing comm port
                 cp.closePort();
                 portList.setEnabled(true);
                 menu.setEnabled(true);
@@ -96,13 +106,14 @@ public class GUI {
             }
         });
 
-
+        //Loading main window
         frame.setResizable(false);
         frame.pack();
         frame.setLocationRelativeTo(null);
         frame.setVisible(true);
     }
 
+    //Function for building the dial
     private ChartPanel buildDialPlot(String fDialLabel,int fMinimumValue, int fMaximumValue, int majorTickGap) {
 
         DialPlot plot = new DialPlot(dataset);
@@ -135,6 +146,7 @@ public class GUI {
         };
     }
 
+    //Function for building the settings window
     public void settingsDialog(JFrame frame){
         JFrame frame2 = new JFrame();
         JDialog d2 = new JDialog(frame2, "Settings", Dialog.ModalityType.APPLICATION_MODAL);
@@ -193,6 +205,7 @@ public class GUI {
         d2.setVisible(true);
     }
 
+    //Function for building a new dial with the new settings
     public void refresh(JFrame frame){
         frame.remove(Gauge);
         dataset.setValue(minimumValue);
